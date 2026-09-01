@@ -58,10 +58,26 @@ Sections live in `src/components/`:
 
 ### Note on paths (important)
 
-Because GitHub Pages serves project repos from a subpath (`/<repo-name>/`), the workflow automatically sets `NEXT_PUBLIC_BASE_PATH` to your repo name during the build so all internal links/assets resolve correctly.
+This project is already configured for the custom domain **mahmoudabdelbadr.tech** — a `public/CNAME` file is included with that domain, and the GitHub Actions workflow does **not** set a base path, since a custom domain is served from the root (not a `/repo-name` subpath like the default `username.github.io/repo` URL would need).
 
-- If this repo **is** your `<username>.github.io` root repo (the special "user site" repo), open `.github/workflows/deploy.yml` and delete the "Set base path" step — you don't need a base path in that case.
-- If you deploy to a **custom domain**, do the same (delete that step) and add a `CNAME` file to `public/` with your domain.
+You still need to point the domain at GitHub in two places:
+
+**1. DNS records** — at your domain registrar (wherever you bought `mahmoudabdelbadr.tech`), add:
+
+For the apex domain (`mahmoudabdelbadr.tech`) — four **A** records pointing to GitHub Pages' IPs:
+```
+185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153
+```
+Optionally, for `www.mahmoudabdelbadr.tech` — a **CNAME** record pointing to `<your-username>.github.io`.
+
+DNS changes can take anywhere from a few minutes to 24 hours to propagate.
+
+**2. GitHub repo settings** — in Settings → Pages → "Custom domain", enter `mahmoudabdelbadr.tech` and save (GitHub reads this from the `public/CNAME` file automatically once deployed, but setting it here too lets GitHub verify DNS and offer to enforce HTTPS). Once DNS is verified, check "Enforce HTTPS".
+
+If you ever want to go back to the default `username.github.io/repo-name` URL instead: delete `public/CNAME`, and re-add a "Set base path" step to `.github/workflows/deploy.yml` (see git history, or ask me and I'll regenerate it).
 
 ### Manual build (optional)
 
